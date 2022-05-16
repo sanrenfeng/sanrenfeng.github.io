@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="utf-8"?>
+<search>
+  
+  
+  
+  <entry>
+    <title></title>
+    <link href="/project/2022/05/15/Sed/"/>
+    <url>/project/2022/05/15/Sed/</url>
+    
+    <content type="html"><![CDATA[<h1 id="swap-mode"><a href="#swap-mode" class="headerlink" title="swap mode"></a>swap mode</h1><h2 id="regular-expression"><a href="#regular-expression" class="headerlink" title="regular expression"></a>regular expression</h2><ul><li>^        匹配行首，/^sed/匹配所有以sed开头的行</li><li>$        匹配行尾，/sed$/</li><li>.        匹配任意非换行符的任意字符，/s.d/ </li><li><ul><li><div class="code-wrapper"><pre><code class="hljs">   匹配0个或多个前面的字符,  /s*/</code></pre></div></li></ul></li><li>[]       匹配指定范围的字符，     /[Ss]ed/–&gt;Sed||sed</li><li>[^]      匹配不在指定范围内的字符，  /[^A-RT-Z]ed/<br>//  - (..)   匹配子串，保存匹配的字符</li><li>&amp;        保存搜索字符用来替换其他字符，s/love/<strong>&amp;</strong>/   love–&gt;<strong>love</strong></li><li>&lt;       匹配单词的开始，/\love/  匹配以love开头的单词的行</li><li>..</li><li>x{m}  重复字符x，m次</li><li>x{m,} 重复字符x，至少m次</li><li>x{m,n} 重复字符至少m，不多于n次<br>sed ‘s/hello/world/‘  input.txt &gt; output.txt</li></ul><p>sed ‘s/Home page: https://[a-z.]<em>[/a-z]</em>//‘ sources.csv  &gt; package.csv</p><p>sed ‘/^$/d’ filename   删除空行</p><p>sed ‘1,3 s/unix/linux/‘ sed-test.txt   1-3行进行替换</p>]]></content>
+    
+    
+    
+  </entry>
+  
+  
+  
+  <entry>
+    <title></title>
+    <link href="/project/2022/05/15/Makefile/"/>
+    <url>/project/2022/05/15/Makefile/</url>
+    
+    <content type="html"><![CDATA[<h2 id="Makefile"><a href="#Makefile" class="headerlink" title="Makefile"></a>Makefile</h2><h3 id="常用的三个自动变量"><a href="#常用的三个自动变量" class="headerlink" title="常用的三个自动变量"></a>常用的三个自动变量</h3><ul><li>$&lt; : 第一个依赖文件</li><li>$@ : 目标</li><li>$^ : 所有不重复的依赖文件，以空格分开</li></ul><h3 id="函数"><a href="#函数" class="headerlink" title="函数"></a>函数</h3><ul><li>wildcard 扩展通配符，搜索指定文件。在此我们使用sources = $(wildcard src/*.c)，代表在src目录下搜索所有的.c文件，并赋值给sources</li><li>obj = $(src:%.c=%.o) 代表将src里的每个文件都由.c替换成.o。</li><li>伪目标clean，这样我们通过执行make clean命令就是将中间文件如.o文件及目标文件全部删除</li></ul>]]></content>
+    
+    
+    
+  </entry>
+  
+  
+  
+  <entry>
+    <title></title>
+    <link href="/project/2022/05/15/Linking/"/>
+    <url>/project/2022/05/15/Linking/</url>
+    
+    <content type="html"><![CDATA[<h1 id="compiler-process"><a href="#compiler-process" class="headerlink" title="compiler process"></a>compiler process</h1><h2 id="preprocess"><a href="#preprocess" class="headerlink" title="preprocess"></a>preprocess</h2><ul><li><p>handle #define ,将#define 展开</p></li><li><p>handle #if,#else,#endif等条件编译指令</p></li><li><p>handle #include，原地插入文件</p></li><li><p>删除注释</p></li><li><p>command –&gt; cpp hello.c &gt; hello.i</p></li></ul><h2 id="compile"><a href="#compile" class="headerlink" title="compile"></a>compile</h2><ul><li>对编译完的文件进行词法，语法，语义分析并进行优化最终产生对应的汇编代码文件</li><li>command –&gt; gcc -S -o hello.s hello.i</li></ul><h2 id="Assembly"><a href="#Assembly" class="headerlink" title="Assembly"></a>Assembly</h2><ul><li>汇编器将汇编代码转换成目标文件</li><li>command –&gt; as -o hello.o hello.s || gcc -c -o hello.o hello.c</li><li>但是此时的文件是ELF文件格式，不能直接查看，此时借用objdump | readelf [-a]工具进行反汇编查看</li></ul><h2 id="linking"><a href="#linking" class="headerlink" title="linking"></a>linking</h2><ul><li>链接器最终将多个目标文件链接起来形成可执行文件</li><li>处理各个模块之间的互相引用i</li><li>{ 静态链接 —&gt; option: -static [–verbose 查看链接过程] 将模块全部加载到内存中，导致应用程序占用很大的内存空间</li><li>{ 动态链接(default)</li></ul><h2 id="ELF-–-gt-gt-可执行文件"><a href="#ELF-–-gt-gt-可执行文件" class="headerlink" title="ELF –&gt;&gt; 可执行文件"></a>ELF –&gt;&gt; 可执行文件</h2><ul><li>目标文件没有经过链接过程，但本身格式是按照可执行文件格式存储的</li><li>动态链接库.so 和 核心转储文件core dump 也是ELF</li><li>ldd hello.out –&gt;&gt; display 共享库依赖</li></ul>]]></content>
+    
+    
+    
+  </entry>
+  
+  
+  
+  <entry>
+    <title></title>
+    <link href="/project/2022/05/15/Gdb/"/>
+    <url>/project/2022/05/15/Gdb/</url>
+    
+    <content type="html"><![CDATA[<h2 id="生成可调试的可执行程序"><a href="#生成可调试的可执行程序" class="headerlink" title="生成可调试的可执行程序"></a>生成可调试的可执行程序</h2><ul><li>gcc -g -o hello hello.c</li></ul><h2 id="查看可执行文件运行时需要链接的库"><a href="#查看可执行文件运行时需要链接的库" class="headerlink" title="查看可执行文件运行时需要链接的库"></a>查看可执行文件运行时需要链接的库</h2><ul><li>ldd -v sizeof</li></ul><h2 id="启动gdb"><a href="#启动gdb" class="headerlink" title="启动gdb"></a>启动gdb</h2><ol><li>gdb</li><li>gdb <file>  such as : gdb hello   //hello 为当前路径下要调试的可执行程序</li><li>gdb -tui <file>   多窗口GUI界面<h2 id="退出gdb"><a href="#退出gdb" class="headerlink" title="退出gdb"></a>退出gdb</h2></li><li>quit 或 q</li><li>Ctrl + d</li></ol><ul><li>Ctrl + c 不会退出gdb，只会将其挂起</li></ul><h2 id="进入gdb后"><a href="#进入gdb后" class="headerlink" title="进入gdb后"></a>进入gdb后</h2><h3 id="打开文件"><a href="#打开文件" class="headerlink" title="打开文件"></a>打开文件</h3><ul><li>file <exe_filename><h3 id="多窗口相关"><a href="#多窗口相关" class="headerlink" title="多窗口相关"></a>多窗口相关</h3></li><li>layout src    源代码窗口在上，cmd窗口在下</li><li>layout asm    汇编窗口在上，cmd窗口在下</li><li>layout split  三窗口：src，asm，cmd</li><li>layout reg    打开寄存器窗口，在最后打开的src、asm之上</li><li>tui r g       显示通用寄存器</li><li>tui r f       显示浮点寄存器</li><li>tui r sys     显示系统寄存器</li><li>tui reg next  显示下一页的寄存器（上述寄存器之外的）</li><li>fs  Winname   winname可以是src/s,cmd/c,asm/a,…</li></ul><h3 id="断点（break-b）"><a href="#断点（break-b）" class="headerlink" title="断点（break/b）"></a>断点（break/b）</h3><ul><li>b function         设置断点在函数入口</li><li>b class::function </li><li>b *address         设置断点在特定的地址处</li></ul><h3 id="断点维护"><a href="#断点维护" class="headerlink" title="断点维护"></a>断点维护</h3><ul><li><p>clear          清除所有已经设立的断点</p></li><li><p>clear function 清除所有在函数上的断点（函数里更贴切些）</p></li><li><p>clear linenum  清除所有在指定行上的断点</p></li><li><p>delete <NUM> 删除编号为num的断点</p></li><li><p>disable/dis <NUM> disable 编号为NUM的断点，不会删除，需要则enable即可</p></li><li><p>enable <NUM>      enable 编号为NUM的断点</p></li></ul><h3 id="调试命令"><a href="#调试命令" class="headerlink" title="调试命令"></a>调试命令</h3><ul><li>run  / r            开始运行当前可执行文件</li><li>kill / k            停止运行，类似关闭</li><li>finish              完成当前函数的运行</li><li>stepi  / si             执行下一条汇编指令</li><li>stepi <NUM>         执行NUM条汇编</li><li>step / s            执行下一条c语句</li><li>nexti               执行下一条汇编指令，不进入被调用函数内部</li><li>nexti <NUM></li><li>next                执行到下一条代码行，不进入被调函数</li><li>advance <location>  执行到location处</li><li>until <location>    </li><li>continue / c        继续</li><li>where                打印当前地址和栈空间</li></ul><h3 id="查看寄存器"><a href="#查看寄存器" class="headerlink" title="查看寄存器"></a>查看寄存器</h3><ul><li>查看多个寄存器<ol><li>info reg / i r ，查看通用寄存器</li><li>info all/ i r a,查看所有寄存器</li></ol></li><li>查看某个寄存器<ol><li>i r rax</li><li>print /a $pc   打印程序计数器（加/a选项可以忽略void什么的,显示地址）</li><li>print /a $rsp  打印栈顶指针 </li><li>print    $eax  打印eax寄存器的内容 （与加选项/d效果相同，显示十进制内容）</li><li>print /x $eax  以十六进制格式打印eax寄存器内容</li><li>print /a $eax  以地址格式打印eax寄存器内容</li><li>print /t $eax  以二进制格式打印eax寄存器内容</li><li>print /c $eax  以字符形式打印eax寄存器内容</li></ol></li></ul><h3 id="查看程序反汇编代码"><a href="#查看程序反汇编代码" class="headerlink" title="查看程序反汇编代码"></a>查看程序反汇编代码</h3><ul><li><p>set disassembly intel/att   设置反汇编格式为intel/att</p></li><li><p>disassemble /m main         在命令行中查看main的汇编代码</p></li><li><p>disassemble /r main         查看main汇编代码，显示16进制指令编码（强推）</p></li><li><p>disassemble                 进行反汇编</p></li></ul><h3 id="查看数据"><a href="#查看数据" class="headerlink" title="查看数据"></a>查看数据</h3><ul><li>print a                        以十进制格式打印变量a的值</li></ul><h3 id="自动显示信息（每次debug都打印其值）"><a href="#自动显示信息（每次debug都打印其值）" class="headerlink" title="自动显示信息（每次debug都打印其值）"></a>自动显示信息（每次debug都打印其值）</h3><ul><li><p>display      $eax    打印eax的值（十进制）</p></li><li><p>display /x   $eax     ….</p></li><li><p>display      a        打印变量的值</p></li><li><p>info display         显示目前我们设置的自动显示的变量和寄存器</p></li><li><p>undisplay <NUM>      删除编号为NUM的自动显示（编号通过info可以查看）</p></li><li><p>delete display <NUM> 删除…..</p></li><li><p>disable display <NUM> 使编号为NUM的自动显示失效</p></li><li><p>enable display <NUM>  使自动显示生效</p></li></ul><h3 id="监视点-观察点"><a href="#监视点-观察点" class="headerlink" title="监视点/观察点"></a>监视点/观察点</h3><ul><li>watch expr  为表达式（变量）设置一个观察点，当表达式有变化时，马上停住程序</li><li>rwatch expr  当表达式（变量）被读时，立即停止程序</li><li>awatch expr  …    被读或被写时</li><li>info watchpoints     列出当前设置的所有观察点</li><li>such  :  watch i      改变i的值则GDB暂停</li></ul><h3 id="查看内存-examine命令"><a href="#查看内存-examine命令" class="headerlink" title="查看内存-examine命令"></a>查看内存-examine命令</h3><ul><li>x /nfu  <addr></li></ul><ol><li>x : examine的缩写</li><li>n : 要显示的内存单元的个数<ul><li>b : 单字节</li><li>h : 双字节</li><li>w : 四字节</li><li>g : 八字节</li></ul></li><li>f : 显示方式<ul><li>x :  hex</li><li>d :  decimal</li><li>u : unsigned decimal</li><li>o : eight</li><li>t : binary</li><li>a : hex、address</li><li>i : isa address</li><li>c : char</li><li>f : float</li><li>s : string</li></ul></li></ol><h3 id="查看调用的函数"><a href="#查看调用的函数" class="headerlink" title="查看调用的函数"></a>查看调用的函数</h3><ul><li>bt  按顺序查看程序调用的函数</li></ul>]]></content>
+    
+    
+    
+  </entry>
+  
+  
+  
+  <entry>
+    <title></title>
+    <link href="/project/2022/05/15/Docker_/"/>
+    <url>/project/2022/05/15/Docker_/</url>
+    
+    <content type="html"><![CDATA[<h1 id="配置Docker"><a href="#配置Docker" class="headerlink" title="配置Docker"></a>配置Docker</h1><h2 id="安装Docker"><a href="#安装Docker" class="headerlink" title="安装Docker"></a>安装Docker</h2><ul><li><a href="https://docs.docker.com/get-docker/">官方安装地址</a></li></ul><h2 id="更改下载源"><a href="#更改下载源" class="headerlink" title="更改下载源"></a>更改下载源</h2><ul><li>考虑到官网下载速度过慢，为加快拉取镜像速度，建议设置docker国内镜像源</li></ul><ol><li><p> 创建或修改 /etc/docker/daemon.json~配置文件</p><figure class="highlight bash"><table><tr><td class="gutter"><div class="code-wrapper"><pre><span class="line">1</span><br></pre></div></td><td class="code"><pre><code class="hljs bash">vim /etc/docker/daemon.json~<br></code></pre></td></tr></table></figure></li><li><p>复制下面内容直接粘贴即可</p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><code class="hljs bash">sudo <span class="hljs-built_in">mkdir</span> -p /etc/docker<br>sudo <span class="hljs-built_in">tee</span> /etc/docker/daemon.json &lt;&lt;-<span class="hljs-string">&#x27;EOF&#x27;</span><br>&#123;<br><span class="hljs-string">&quot;registry-mirrors&quot;</span>: [<span class="hljs-string">&quot;https://09c5kntx.mirror.aliyuncs.com&quot;</span>]<br>&#125;<br>EOF<br>sudo systemctl daemon-reload<br>sudo systemctl restart docker<br></code></pre></td></tr></table></figure></li></ol><h2 id="获取北大编译实践的镜像"><a href="#获取北大编译实践的镜像" class="headerlink" title="获取北大编译实践的镜像"></a>获取北大编译实践的镜像</h2><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">sudo docker pull maxxing/compiler-dev<br></code></pre></td></tr></table></figure><ul><li>liunx系统下拉取镜像需要使用sudo命令</li></ul>]]></content>
+    
+    
+    
+  </entry>
+  
+  
+  
+  <entry>
+    <title></title>
+    <link href="/project/2022/05/15/C_Study/"/>
+    <url>/project/2022/05/15/C_Study/</url>
+    
+    <content type="html"><![CDATA[<h1 id="C-Study-in-reading-tac-compiler-code"><a href="#C-Study-in-reading-tac-compiler-code" class="headerlink" title="C_Study in reading tac compiler code"></a>C_Study in reading tac compiler code</h1><h2 id="size-t-类型"><a href="#size-t-类型" class="headerlink" title="size_t  类型"></a>size_t  类型</h2><ul><li><p>code in stddef.h</p><ol><li>#define <strong>SIZE_TYPE</strong> long unsigned int;</li><li>typedef <strong>SIZE_TYPE</strong> size_t;</li></ol></li><li><p>size_t:记录大小的无符号长整型，32位系统为4字节，64系统为8字节</p></li></ul><h2 id="ssize-t-类型"><a href="#ssize-t-类型" class="headerlink" title="ssize_t  类型"></a>ssize_t  类型</h2><ul><li>code in stdio.h<ol><li>typedef long  __ssize_t;</li><li>typedef __ssize_t ssize_t;</li></ol></li><li>ssize_t:有符号长整型,32位系统为4字节，64系统为8字节</li></ul><h2 id="void-指针"><a href="#void-指针" class="headerlink" title="void* 指针"></a>void* 指针</h2><ul><li>任意类型的指针<h2 id="calloc-函数"><a href="#calloc-函数" class="headerlink" title="calloc()  函数"></a>calloc()  函数</h2></li><li>calloc:动态分配存储函数</li></ul><ol><li>函数原型： void* calloc(unsigned int n,unsigned int size);</li><li>在内存中分配一个n倍size字节的存储区。调用结果为新分配的存储区的首地址，是一个void类型指针。</li></ol><h2 id="realloc-函数"><a href="#realloc-函数" class="headerlink" title="realloc() 函数"></a>realloc() 函数</h2><ul><li>重新调整用malloc或calloc所分配的ptr所指向的内存块的大小。<ol><li>函数原型：void *realloc(void *ptr, size_t size)</li><li>为指针ptr（任意类型）分配大小为size字节的内存空间，返回值为指向存储空间的指针</li></ol></li></ul><h2 id="sptring-函数"><a href="#sptring-函数" class="headerlink" title="sptring() 函数"></a>sptring() 函数</h2><ul><li>发送格式化输出到 str 所指向的字符串。</li></ul><ol><li>函数原型： int sprintf(char *str, const char *format, …)</li><li>format – 这是字符串，包含了要被写入到字符串 str 的文本。</li></ol>]]></content>
+    
+    
+    
+  </entry>
+  
+  
+  
+  <entry>
+    <title></title>
+    <link href="/project/2022/05/15/Compile/"/>
+    <url>/project/2022/05/15/Compile/</url>
+    
+    <content type="html"><![CDATA[<h2 id="procedure"><a href="#procedure" class="headerlink" title="procedure"></a>procedure</h2><ol><li>Lexical Analysis<ul><li>识别并分类字符串生成tokens</li><li>&lt;class,lexemes&gt;  :   &lt;INTEGER,”123”&gt;</li><li>正则表达式的使用</li><li>超长匹配</li><li>超前扫描技术</li><li>优先级排序</li><li>Error字符串 : 不在定义的规则内的字符串</li><li>DFA</li><li>NFA</li></ul></li><li>Parsing</li><li>Semantic Analysis</li><li>Optimization</li><li>Code Generation</li></ol>]]></content>
+    
+    
+    
+  </entry>
+  
+  
+  
+  <entry>
+    <title></title>
+    <link href="/project/2022/05/15/Vim/"/>
+    <url>/project/2022/05/15/Vim/</url>
+    
+    <content type="html"><![CDATA[<h2 id="General-usage"><a href="#General-usage" class="headerlink" title="General usage"></a>General usage</h2><h3 id="view-mod"><a href="#view-mod" class="headerlink" title="view mod"></a>view mod</h3><h4 id="move"><a href="#move" class="headerlink" title="move"></a>move</h4><ul><li>h   left</li><li>j   down</li><li>k   up</li><li>l   right</li><li>e   move to the end of word</li><li>b   move to the beginning of word</li><li>H   the top of the screen</li><li>L   the bottom of the screen</li><li><blockquote><p>  move  he line right</p></blockquote></li><li>&lt;   move the line left</li><li>}   move to next paragraph</li><li>{   move to last paragraph</li></ul><h4 id="change"><a href="#change" class="headerlink" title="change"></a>change</h4><ul><li>r   change character and then enter insert mod</li><li>c  </li><li>u   revoke  撤销</li><li>ctrl + r  anti-revoke  反撤销</li><li>yy  copy</li><li>p   paste</li><li>de/db/dd delete the cursor to the end of word /the begin of world to the cursor / delete the line</li></ul><h4 id="file-tree"><a href="#file-tree" class="headerlink" title="file tree"></a>file tree</h4><ul><li><p><F3>/<SPC> f t   open/close the file explorer</p><h5 id="with-in-file-tree"><a href="#with-in-file-tree" class="headerlink" title="with in file tree"></a>with in file tree</h5></li><li><p>h         go to the parent node</p></li><li><p>j         go to next file or directory</p></li><li><p>k         go to previous file or directory</p></li><li><p>l         open selected file or expand directory  </p></li><li><p><Enter>   open file or switch to directory</p></li><li><p>N         create new file under cursor</p></li><li><p>K         create new directory under cursor</p></li><li><p>r         rename the file under the cursor</p></li><li><p>d         delete the file under the cursor</p></li><li><p>P         paste the file to the cursor</p></li></ul><h4 id="注释"><a href="#注释" class="headerlink" title="注释"></a>注释</h4><ul><li><SPC> c l   注释行</li><li><SPC> c p   注释块</li></ul><h4 id="windows-control"><a href="#windows-control" class="headerlink" title="windows control"></a>windows control</h4><h5 id="change-windows"><a href="#change-windows" class="headerlink" title="change windows"></a>change windows</h5><ul><li><p>Ctrl + <Down>      change to the bottom window</p></li><li><p>Ctrl + <Up>        change to the top window</p></li><li><p>Ctrl + <Right>     change to the right window</p></li><li><p>Ctrl + <Left>      change to the left  window</p></li><li><p><SPC> w h   move window to the left</p></li><li><p><SPC> w j   move window to the right</p></li><li><p>…SPC</p></li></ul><h4 id="set-windows"><a href="#set-windows" class="headerlink" title="set windows"></a>set windows</h4><ul><li>q     智能关闭当前窗口</li><li>s v   水平分屏</li><li>s g   垂直分屏</li><li>s o   关闭其他窗口</li><li><SPC> 1  跳至窗口1 </li></ul><h3 id="termnail"><a href="#termnail" class="headerlink" title="termnail"></a>termnail</h3><ul><li><SPC> ‘  open termnial</li></ul><h3 id="file"><a href="#file" class="headerlink" title="file"></a>file</h3><ul><li><SPC> f s   save a file</li></ul>]]></content>
+    
+    
+    
+  </entry>
+  
+  
+  
+  <entry>
+    <title>Java</title>
+    <link href="/project/2022/05/15/Java/"/>
+    <url>/project/2022/05/15/Java/</url>
+    
+    <content type="html"><![CDATA[]]></content>
+    
+    
+    
+  </entry>
+  
+  
+  
+  
+</search>

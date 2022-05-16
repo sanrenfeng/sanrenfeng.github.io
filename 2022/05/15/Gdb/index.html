@@ -1,11 +1,580 @@
-extends includes/layout
 
 
-block content
-  .post-item
-  h2.post-title-wrapper
-      p.post-title=page.title
-  if page.date && page.source !== 'about/index.md'
-      div.post-date
-        time(datetime=page.date.toJSON())=date(page.date, date_format)
-  .post-content!= page.content
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=auto>
+
+
+
+<head>
+  <meta charset="UTF-8">
+  <link rel="apple-touch-icon" sizes="76x76" href="/project/img/favicon.png">
+  <link rel="icon" href="/project/img/favicon.png">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="李佳勇">
+  <meta name="keywords" content="computer blogs">
+  
+    <meta name="description" content="生成可调试的可执行程序 gcc -g -o hello hello.c  查看可执行文件运行时需要链接的库 ldd -v sizeof  启动gdb gdb gdb   such as : gdb hello   &#x2F;&#x2F;hello 为当前路径下要调试的可执行程序 gdb -tui    多窗口GUI界面退出gdb quit 或 q Ctrl + d   Ctrl + c 不会退出gdb，只会将其挂起">
+<meta property="og:type" content="article">
+<meta property="og:title" content="jiayong">
+<meta property="og:url" content="https://sanrenfeng.github.io/project/2022/05/15/Gdb/index.html">
+<meta property="og:site_name" content="jiayong">
+<meta property="og:description" content="生成可调试的可执行程序 gcc -g -o hello hello.c  查看可执行文件运行时需要链接的库 ldd -v sizeof  启动gdb gdb gdb   such as : gdb hello   &#x2F;&#x2F;hello 为当前路径下要调试的可执行程序 gdb -tui    多窗口GUI界面退出gdb quit 或 q Ctrl + d   Ctrl + c 不会退出gdb，只会将其挂起">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2022-05-16T02:50:58.613Z">
+<meta property="article:modified_time" content="2022-05-16T02:50:58.617Z">
+<meta property="article:author" content="李佳勇">
+<meta property="article:tag" content="computer blogs">
+<meta name="twitter:card" content="summary_large_image">
+  
+  
+  <title>jiayong</title>
+
+  <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4/dist/css/bootstrap.min.css" />
+
+
+  <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/github-markdown-css@4/github-markdown.min.css" />
+  <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/hint.css@2/hint.min.css" />
+
+  
+    
+    
+      
+      <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/highlight.js@10/styles/github-gist.min.css" />
+    
+  
+
+  
+    <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@3/dist/jquery.fancybox.min.css" />
+  
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1749284_ba1fz6golrf.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_lbnruvf0jn.css">
+
+
+<link  rel="stylesheet" href="/project/css/main.css" />
+
+<!-- 自定义样式保持在最底部 -->
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    var CONFIG = {"hostname":"sanrenfeng.github.io","root":"/project/","version":"1.8.14","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"right","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"copy_btn":true,"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"baidu":null,"google":null,"gtag":null,"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false}},"search_path":"/project/local-search.xml"};
+  </script>
+  <script  src="/project/js/utils.js" ></script>
+  <script  src="/project/js/color-schema.js" ></script>
+<meta name="generator" content="Hexo 5.4.2"></head>
+
+
+<body>
+  <header style="height: 70vh;">
+    <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/project/">
+      <strong>Fluid</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/project/">
+                <i class="iconfont icon-home-fill"></i>
+                首页
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/project/archives/">
+                <i class="iconfont icon-archive-fill"></i>
+                归档
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/project/categories/">
+                <i class="iconfont icon-category-fill"></i>
+                分类
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/project/tags/">
+                <i class="iconfont icon-tags-fill"></i>
+                标签
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/project/about/">
+                <i class="iconfont icon-user-fill"></i>
+                关于
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              &nbsp;<i class="iconfont icon-search"></i>&nbsp;
+            </a>
+          </li>
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">&nbsp;<i
+                class="iconfont icon-dark" id="color-toggle-icon"></i>&nbsp;</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+    <div class="banner" id="banner" parallax=true
+         style="background: url('/project/img/default.png') no-repeat center center;
+           background-size: cover;">
+      <div class="full-bg-img">
+        <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+          <div class="page-header text-center fade-in-up">
+            <span class="h2" id="subtitle" title="">
+              
+            </span>
+
+            
+              <div class="mt-3">
+  
+  
+    <span class="post-meta">
+      <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+      <time datetime="2022-05-15 19:50" pubdate>
+        2022年5月15日 晚上
+      </time>
+    </span>
+  
+</div>
+
+<div class="mt-1">
+  
+    <span class="post-meta mr-2">
+      <i class="iconfont icon-chart"></i>
+      1.8k 字
+    </span>
+  
+
+  
+    <span class="post-meta mr-2">
+      <i class="iconfont icon-clock-fill"></i>
+      
+      
+      15 分钟
+    </span>
+  
+
+  
+  
+</div>
+
+            
+          </div>
+
+          
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="d-none d-lg-block col-lg-2"></div>
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div class="py-5" id="board">
+          <article class="post-content mx-auto">
+            <!-- SEO header -->
+            <h1 style="display: none"></h1>
+            
+            <div class="markdown-body">
+              <h2 id="生成可调试的可执行程序"><a href="#生成可调试的可执行程序" class="headerlink" title="生成可调试的可执行程序"></a>生成可调试的可执行程序</h2><ul>
+<li>gcc -g -o hello hello.c</li>
+</ul>
+<h2 id="查看可执行文件运行时需要链接的库"><a href="#查看可执行文件运行时需要链接的库" class="headerlink" title="查看可执行文件运行时需要链接的库"></a>查看可执行文件运行时需要链接的库</h2><ul>
+<li>ldd -v sizeof</li>
+</ul>
+<h2 id="启动gdb"><a href="#启动gdb" class="headerlink" title="启动gdb"></a>启动gdb</h2><ol>
+<li>gdb</li>
+<li>gdb <file>  such as : gdb hello   //hello 为当前路径下要调试的可执行程序</li>
+<li>gdb -tui <file>   多窗口GUI界面<h2 id="退出gdb"><a href="#退出gdb" class="headerlink" title="退出gdb"></a>退出gdb</h2></li>
+<li>quit 或 q</li>
+<li>Ctrl + d</li>
+</ol>
+<ul>
+<li>Ctrl + c 不会退出gdb，只会将其挂起</li>
+</ul>
+<h2 id="进入gdb后"><a href="#进入gdb后" class="headerlink" title="进入gdb后"></a>进入gdb后</h2><h3 id="打开文件"><a href="#打开文件" class="headerlink" title="打开文件"></a>打开文件</h3><ul>
+<li>file <exe_filename><h3 id="多窗口相关"><a href="#多窗口相关" class="headerlink" title="多窗口相关"></a>多窗口相关</h3></li>
+<li>layout src    源代码窗口在上，cmd窗口在下</li>
+<li>layout asm    汇编窗口在上，cmd窗口在下</li>
+<li>layout split  三窗口：src，asm，cmd</li>
+<li>layout reg    打开寄存器窗口，在最后打开的src、asm之上</li>
+<li>tui r g       显示通用寄存器</li>
+<li>tui r f       显示浮点寄存器</li>
+<li>tui r sys     显示系统寄存器</li>
+<li>tui reg next  显示下一页的寄存器（上述寄存器之外的）</li>
+<li>fs  Winname   winname可以是src/s,cmd/c,asm/a,…</li>
+</ul>
+<h3 id="断点（break-b）"><a href="#断点（break-b）" class="headerlink" title="断点（break/b）"></a>断点（break/b）</h3><ul>
+<li>b function         设置断点在函数入口</li>
+<li>b class::function </li>
+<li>b *address         设置断点在特定的地址处</li>
+</ul>
+<h3 id="断点维护"><a href="#断点维护" class="headerlink" title="断点维护"></a>断点维护</h3><ul>
+<li><p>clear          清除所有已经设立的断点</p>
+</li>
+<li><p>clear function 清除所有在函数上的断点（函数里更贴切些）</p>
+</li>
+<li><p>clear linenum  清除所有在指定行上的断点</p>
+</li>
+<li><p>delete <NUM> 删除编号为num的断点</p>
+</li>
+<li><p>disable/dis <NUM> disable 编号为NUM的断点，不会删除，需要则enable即可</p>
+</li>
+<li><p>enable <NUM>      enable 编号为NUM的断点</p>
+</li>
+</ul>
+<h3 id="调试命令"><a href="#调试命令" class="headerlink" title="调试命令"></a>调试命令</h3><ul>
+<li>run  / r            开始运行当前可执行文件</li>
+<li>kill / k            停止运行，类似关闭</li>
+<li>finish              完成当前函数的运行</li>
+<li>stepi  / si             执行下一条汇编指令</li>
+<li>stepi <NUM>         执行NUM条汇编</li>
+<li>step / s            执行下一条c语句</li>
+<li>nexti               执行下一条汇编指令，不进入被调用函数内部</li>
+<li>nexti <NUM></li>
+<li>next                执行到下一条代码行，不进入被调函数</li>
+<li>advance <location>  执行到location处</li>
+<li>until <location>    </li>
+<li>continue / c        继续</li>
+<li>where                打印当前地址和栈空间</li>
+</ul>
+<h3 id="查看寄存器"><a href="#查看寄存器" class="headerlink" title="查看寄存器"></a>查看寄存器</h3><ul>
+<li>查看多个寄存器<ol>
+<li>info reg / i r ，查看通用寄存器</li>
+<li>info all/ i r a,查看所有寄存器</li>
+</ol>
+</li>
+<li>查看某个寄存器<ol>
+<li>i r rax</li>
+<li>print /a $pc   打印程序计数器（加/a选项可以忽略void什么的,显示地址）</li>
+<li>print /a $rsp  打印栈顶指针 </li>
+<li>print    $eax  打印eax寄存器的内容 （与加选项/d效果相同，显示十进制内容）</li>
+<li>print /x $eax  以十六进制格式打印eax寄存器内容</li>
+<li>print /a $eax  以地址格式打印eax寄存器内容</li>
+<li>print /t $eax  以二进制格式打印eax寄存器内容</li>
+<li>print /c $eax  以字符形式打印eax寄存器内容</li>
+</ol>
+</li>
+</ul>
+<h3 id="查看程序反汇编代码"><a href="#查看程序反汇编代码" class="headerlink" title="查看程序反汇编代码"></a>查看程序反汇编代码</h3><ul>
+<li><p>set disassembly intel/att   设置反汇编格式为intel/att</p>
+</li>
+<li><p>disassemble /m main         在命令行中查看main的汇编代码</p>
+</li>
+<li><p>disassemble /r main         查看main汇编代码，显示16进制指令编码（强推）</p>
+</li>
+<li><p>disassemble                 进行反汇编</p>
+</li>
+</ul>
+<h3 id="查看数据"><a href="#查看数据" class="headerlink" title="查看数据"></a>查看数据</h3><ul>
+<li>print a                        以十进制格式打印变量a的值</li>
+</ul>
+<h3 id="自动显示信息（每次debug都打印其值）"><a href="#自动显示信息（每次debug都打印其值）" class="headerlink" title="自动显示信息（每次debug都打印其值）"></a>自动显示信息（每次debug都打印其值）</h3><ul>
+<li><p>display      $eax    打印eax的值（十进制）</p>
+</li>
+<li><p>display /x   $eax     ….</p>
+</li>
+<li><p>display      a        打印变量的值</p>
+</li>
+<li><p>info display         显示目前我们设置的自动显示的变量和寄存器</p>
+</li>
+<li><p>undisplay <NUM>      删除编号为NUM的自动显示（编号通过info可以查看）</p>
+</li>
+<li><p>delete display <NUM> 删除…..</p>
+</li>
+<li><p>disable display <NUM> 使编号为NUM的自动显示失效</p>
+</li>
+<li><p>enable display <NUM>  使自动显示生效</p>
+</li>
+</ul>
+<h3 id="监视点-观察点"><a href="#监视点-观察点" class="headerlink" title="监视点/观察点"></a>监视点/观察点</h3><ul>
+<li>watch expr  为表达式（变量）设置一个观察点，当表达式有变化时，马上停住程序</li>
+<li>rwatch expr  当表达式（变量）被读时，立即停止程序</li>
+<li>awatch expr  …    被读或被写时</li>
+<li>info watchpoints     列出当前设置的所有观察点</li>
+<li>such  :  watch i      改变i的值则GDB暂停</li>
+</ul>
+<h3 id="查看内存-examine命令"><a href="#查看内存-examine命令" class="headerlink" title="查看内存-examine命令"></a>查看内存-examine命令</h3><ul>
+<li>x /nfu  <addr></li>
+</ul>
+<ol>
+<li>x : examine的缩写</li>
+<li>n : 要显示的内存单元的个数<ul>
+<li>b : 单字节</li>
+<li>h : 双字节</li>
+<li>w : 四字节</li>
+<li>g : 八字节</li>
+</ul>
+</li>
+<li>f : 显示方式<ul>
+<li>x :  hex</li>
+<li>d :  decimal</li>
+<li>u : unsigned decimal</li>
+<li>o : eight</li>
+<li>t : binary</li>
+<li>a : hex、address</li>
+<li>i : isa address</li>
+<li>c : char</li>
+<li>f : float</li>
+<li>s : string</li>
+</ul>
+</li>
+</ol>
+<h3 id="查看调用的函数"><a href="#查看调用的函数" class="headerlink" title="查看调用的函数"></a>查看调用的函数</h3><ul>
+<li>bt  按顺序查看程序调用的函数</li>
+</ul>
+
+            </div>
+            <hr>
+            <div>
+              <div class="post-metas mb-3">
+                
+                
+              </div>
+              
+                <p class="note note-warning">
+                  
+                    本博客所有文章除特别声明外，均采用 <a target="_blank" href="https://creativecommons.org/licenses/by-sa/4.0/deed.zh" rel="nofollow noopener noopener">CC BY-SA 4.0 协议</a> ，转载请注明出处！
+                  
+                </p>
+              
+              
+                <div class="post-prevnext">
+                  <article class="post-prev col-6">
+                    
+                    
+                      <a href="/project/2022/05/15/Linking/">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile"></span>
+                        <span class="visible-mobile">上一篇</span>
+                      </a>
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/project/2022/05/15/Docker_/">
+                        <span class="hidden-mobile"></span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+          </article>
+        </div>
+      </div>
+    </div>
+    
+      <div class="d-none d-lg-block col-lg-2 toc-container" id="toc-ctn">
+        <div id="toc">
+  <p class="toc-header"><i class="iconfont icon-list"></i>&nbsp;目录</p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+      </div>
+    
+  </div>
+</div>
+
+<!-- Custom -->
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v"
+                 for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+    
+
+    
+  </main>
+
+  <footer class="text-center mt-5 py-3">
+  <div class="footer-content">
+     <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>Fluid</span></a> 
+  </div>
+  
+
+  
+
+  
+</footer>
+
+
+  <!-- SCRIPTS -->
+  
+  <script  src="https://cdn.jsdelivr.net/npm/nprogress@0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/nprogress@0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://cdn.jsdelivr.net/npm/jquery@3/dist/jquery.min.js" ></script>
+<script  src="https://cdn.jsdelivr.net/npm/bootstrap@4/dist/js/bootstrap.min.js" ></script>
+<script  src="/project/js/events.js" ></script>
+<script  src="/project/js/plugins.js" ></script>
+
+<!-- Plugins -->
+
+
+  <script  src="/project/js/local-search.js" ></script>
+
+
+
+  
+    <script  src="/project/js/img-lazyload.js" ></script>
+  
+
+
+
+  
+
+
+
+  
+    <script  src="https://cdn.jsdelivr.net/npm/tocbot@4/dist/tocbot.min.js" ></script>
+  
+  
+    <script  src="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@3/dist/jquery.fancybox.min.js" ></script>
+  
+  
+    <script  src="https://cdn.jsdelivr.net/npm/anchor-js@4/anchor.min.js" ></script>
+  
+  
+    <script defer src="https://cdn.jsdelivr.net/npm/clipboard@2/dist/clipboard.min.js" ></script>
+  
+
+
+
+
+
+
+  <script  src="https://cdn.jsdelivr.net/npm/typed.js@2/lib/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var title = document.getElementById('subtitle').title;
+      
+        typing(title);
+      
+    })(window, document);
+  </script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<!-- 主题的启动项 保持在最底部 -->
+<script  src="/project/js/boot.js" ></script>
+
+
+</body>
+</html>
