@@ -5,17 +5,17 @@
   
 
   
-  <title>Java | jiayong</title>
+  <title>jiayong</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta name="description" content="this is the blogs of jiayong">
+  <meta name="description" content="C_Study in reading tac compiler codesize_t  类型 code in stddef.h  #define SIZE_TYPE long unsigned int; typedef SIZE_TYPE size_t;   size_t:记录大小的无符号长整型，32位系统为4字节，64系统为8字节   ssize_t  类型 code in stdio.h ty">
 <meta property="og:type" content="article">
-<meta property="og:title" content="Java">
-<meta property="og:url" content="https://sanrenfeng.github.io/project/2022/05/15/Java/index.html">
+<meta property="og:title" content="jiayong">
+<meta property="og:url" content="https://sanrenfeng.github.io/project/2022/05/15/C_Study/index.html">
 <meta property="og:site_name" content="jiayong">
-<meta property="og:description" content="this is the blogs of jiayong">
+<meta property="og:description" content="C_Study in reading tac compiler codesize_t  类型 code in stddef.h  #define SIZE_TYPE long unsigned int; typedef SIZE_TYPE size_t;   size_t:记录大小的无符号长整型，32位系统为4字节，64系统为8字节   ssize_t  类型 code in stdio.h ty">
 <meta property="og:locale" content="zh_CN">
-<meta property="article:published_time" content="2022-05-16T02:32:52.000Z">
-<meta property="article:modified_time" content="2022-05-16T02:32:52.288Z">
+<meta property="article:published_time" content="2022-05-16T02:50:58.557Z">
+<meta property="article:modified_time" content="2022-05-16T02:50:58.597Z">
 <meta property="article:author" content="李佳勇">
 <meta property="article:tag" content="computer blogs">
 <meta name="twitter:card" content="summary">
@@ -67,33 +67,63 @@
   </div>
 </header>
       <div class="outer">
-        <section id="main"><article id="post-Java" class="article article-type-post" itemscope itemprop="blogPost">
+        <section id="main"><article id="post-C_Study" class="article article-type-post" itemscope itemprop="blogPost">
   <div class="article-meta">
-    <a href="/project/2022/05/15/Java/" class="article-date">
-  <time datetime="2022-05-16T02:32:52.000Z" itemprop="datePublished">2022-05-15</time>
+    <a href="/project/2022/05/15/C_Study/" class="article-date">
+  <time datetime="2022-05-16T02:50:58.557Z" itemprop="datePublished">2022-05-15</time>
 </a>
     
   </div>
   <div class="article-inner">
     
     
-      <header class="article-header">
-        
-  
-    <h1 class="article-title" itemprop="name">
-      Java
-    </h1>
-  
-
-      </header>
-    
     <div class="article-entry" itemprop="articleBody">
       
-        
+        <h1 id="C-Study-in-reading-tac-compiler-code"><a href="#C-Study-in-reading-tac-compiler-code" class="headerlink" title="C_Study in reading tac compiler code"></a>C_Study in reading tac compiler code</h1><h2 id="size-t-类型"><a href="#size-t-类型" class="headerlink" title="size_t  类型"></a>size_t  类型</h2><ul>
+<li><p>code in stddef.h</p>
+<ol>
+<li>#define <strong>SIZE_TYPE</strong> long unsigned int;</li>
+<li>typedef <strong>SIZE_TYPE</strong> size_t;</li>
+</ol>
+</li>
+<li><p>size_t:记录大小的无符号长整型，32位系统为4字节，64系统为8字节</p>
+</li>
+</ul>
+<h2 id="ssize-t-类型"><a href="#ssize-t-类型" class="headerlink" title="ssize_t  类型"></a>ssize_t  类型</h2><ul>
+<li>code in stdio.h<ol>
+<li>typedef long  __ssize_t;</li>
+<li>typedef __ssize_t ssize_t;</li>
+</ol>
+</li>
+<li>ssize_t:有符号长整型,32位系统为4字节，64系统为8字节</li>
+</ul>
+<h2 id="void-指针"><a href="#void-指针" class="headerlink" title="void* 指针"></a>void* 指针</h2><ul>
+<li>任意类型的指针<h2 id="calloc-函数"><a href="#calloc-函数" class="headerlink" title="calloc()  函数"></a>calloc()  函数</h2></li>
+<li>calloc:动态分配存储函数</li>
+</ul>
+<ol>
+<li>函数原型： void* calloc(unsigned int n,unsigned int size);</li>
+<li>在内存中分配一个n倍size字节的存储区。调用结果为新分配的存储区的首地址，是一个void类型指针。</li>
+</ol>
+<h2 id="realloc-函数"><a href="#realloc-函数" class="headerlink" title="realloc() 函数"></a>realloc() 函数</h2><ul>
+<li>重新调整用malloc或calloc所分配的ptr所指向的内存块的大小。<ol>
+<li>函数原型：void *realloc(void *ptr, size_t size)</li>
+<li>为指针ptr（任意类型）分配大小为size字节的内存空间，返回值为指向存储空间的指针</li>
+</ol>
+</li>
+</ul>
+<h2 id="sptring-函数"><a href="#sptring-函数" class="headerlink" title="sptring() 函数"></a>sptring() 函数</h2><ul>
+<li>发送格式化输出到 str 所指向的字符串。</li>
+</ul>
+<ol>
+<li>函数原型： int sprintf(char *str, const char *format, …)</li>
+<li>format – 这是字符串，包含了要被写入到字符串 str 的文本。</li>
+</ol>
+
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://sanrenfeng.github.io/project/2022/05/15/Java/" data-id="cl3854sk700072rjx6pz2atjr" class="article-share-link">Share</a>
+      <a data-url="https://sanrenfeng.github.io/project/2022/05/15/C_Study/" data-id="cl3854sip00002rjxh0y3exc6" class="article-share-link">Share</a>
       
       
     </footer>
@@ -102,7 +132,7 @@
     
 <nav id="article-nav">
   
-    <a href="/project/2022/05/15/Vim/" id="article-nav-newer" class="article-nav-link-wrap">
+    <a href="/project/2022/05/15/Docker_/" id="article-nav-newer" class="article-nav-link-wrap">
       <strong class="article-nav-caption">Newer</strong>
       <div class="article-nav-title">
         
@@ -111,6 +141,11 @@
       </div>
     </a>
   
+  
+    <a href="/project/2022/05/15/Compile/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Older</strong>
+      <div class="article-nav-title"></div>
+    </a>
   
 </nav>
 
